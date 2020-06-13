@@ -20,7 +20,7 @@ stop processing the request.
 (handle :get (uri-fun :uri \"/path/to/page\"/) @content-type (args) (body))"
   `(tbnl:define-easy-handler ,uri ,params
      (unless (eq ,method (tbnl:request-method*))
-       (setf (tbnl:return-code*) tbnl:+http-not-found+)
+       (setf (tbnl:return-code*) tbnl:+http-method-not-allowed+)
        (tbnl:abort-request-handler))
      (setf (tbnl:content-type* tbnl:*reply*) ,content-type)
      ,@body))
