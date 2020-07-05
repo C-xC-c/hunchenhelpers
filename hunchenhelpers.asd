@@ -1,8 +1,8 @@
 (asdf:defsystem #:hunchenhelpers
-  :description "A helper library to simplify hunchentoot"
+  :description "A helper library for  hunchentoot"
   :author "Manx (boku@plum.moe)"
   :license "X11/MIT"
-  :version "0.1.0"
+  :version "1.0.0"
   :serial t
   :depends-on (:hunchentoot)
   :Components ((:file "package")
