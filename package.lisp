@@ -1,3 +1,3 @@
 (defpackage #:hunchenhelpers
-  (:nicknames :henh)
+  (:nicknames #:toot)
   (:use #:cl))

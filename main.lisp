@@ -18,6 +18,13 @@
 (defun host-dir (uri path &optional content-type)
   (hunchenhost tbnl:create-folder-dispatcher-and-handler uri path content-type))
 
+(defmacro config-item (thing &aux (item (gensym)))
+  "Get `thing' from the alist `config', error if it doesn't exist"
+  `(let ((,item (assoc ,thing (eval (read-from-string "config")))))
+     (when (atom ,item)
+       (error "No such config item"))
+     (cdr ,item)))
+
 ;; Stolen from stackoverflow
 (defmacro method-path (methods path)
   "Expands to a predicate the returns true of the Hunchtoot request
@@ -60,4 +67,5 @@ handler.
 (export '(host-file
           host-dir
           handle
-          acceptor))
+          acceptor
+          config-item))
