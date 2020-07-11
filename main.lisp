@@ -6,24 +6,9 @@
    :address "127.0.0.1"
    :error-template-directory "/var/www/err/"
    :message-log-destination nil
-   :access-log-destination nil)
+   :access-log-destination nil
+   :document-root nil)
   (:documentation "Because I hate writing code"))
-
-(defmacro hunchenhost (func uri path &optional content-type)  
-  `(push (,func ,uri ,path (or ,content-type ,tbnl:*default-content-type*)) tbnl:*dispatch-table*))
-
-(defun host-file (uri path &optional content-type)
-  (hunchenhost tbnl:create-static-file-dispatcher-and-handler uri path content-type))
-
-(defun host-dir (uri path &optional content-type)
-  (hunchenhost tbnl:create-folder-dispatcher-and-handler uri path content-type))
-
-(defmacro config-item (thing &aux (item (gensym)))
-  "Get `thing' from the alist `config', error if it doesn't exist"
-  `(let ((,item (assoc ,thing (eval (read-from-string "config")))))
-     (when (atom ,item)
-       (error "No such config item"))
-     (cdr ,item)))
 
 ;; Stolen from stackoverflow
 (defmacro method-path (methods path)
@@ -31,9 +16,8 @@
 has a SCRIPT-NAME matching the PATH and METHOD in the list of METHODS.
 You may pass a single method as a designator for the list containing
 only that method."
-  (declare
-   (type (or keyword list) methods)
-   (type string path))
+  (declare (type (or keyword list) methods)
+           (type string path))
   `(lambda (request)
      (and (member (hunchentoot:request-method* request)
                   ,(if (keywordp methods)
@@ -56,16 +40,12 @@ handler.
 `params' are the request parameters of the client
 
 `body' is what is evaluated and returned to the client"
-  (destructuring-bind (name method uri &optional content-type)
+  (destructuring-bind (name method uri &key content-type (acceptor t)
+                       &aux (uri (eval uri)))
       request
-    `(tbnl:define-easy-handler (,name :uri (method-path ,method ,uri))
+    `(tbnl:define-easy-handler (,name :uri (method-path ,method ,uri)
+                                      :acceptor-names (if (eq ,acceptor t) t (list ,acceptor)))
          ,params
        (when ,content-type
          (setf (tbnl:content-type* tbnl:*reply*) ,content-type))
        ,@body)))
-
-(export '(host-file
-          host-dir
-          handle
-          acceptor
-          config-item))

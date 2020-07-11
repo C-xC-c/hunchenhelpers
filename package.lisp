@@ -1,3 +1,7 @@
 (defpackage #:hunchenhelpers
   (:nicknames #:toot)
-  (:use #:cl))
+  (:use #:cl)
+  (:export #:host-file
+           #:host-dir
+           #:handle
+           #:acceptor))
